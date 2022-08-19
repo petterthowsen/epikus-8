@@ -1,0 +1,267 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://UI/Theme.tres" type="Theme" id=1]
+[ext_resource path="res://Spriter/PaletteSelector.gd" type="Script" id=2]
+[ext_resource path="res://Spriter/Canvas.gd" type="Script" id=3]
+[ext_resource path="res://Spriter/Spriter.gd" type="Script" id=4]
+[ext_resource path="res://Spriter/Painter.gd" type="Script" id=5]
+[ext_resource path="res://Spriter/TilesetSelector.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Spriter/Tileset/TilesetControl.gd" type="Script" id=8]
+[ext_resource path="res://Spriter/NewTilesetPopup.gd" type="Script" id=10]
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.133333, 0.133333, 0.133333, 1 )
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 1.0
+content_margin_right = 1.0
+content_margin_top = 1.0
+content_margin_bottom = 1.0
+bg_color = Color( 0, 0, 0, 1 )
+anti_aliasing = false
+
+[node name="Spriter" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = ExtResource( 4 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 0
+
+[node name="TopBar" type="PanelContainer" parent="VBoxContainer"]
+margin_right = 320.0
+margin_bottom = 4.0
+size_flags_horizontal = 3
+
+[node name="HBox" type="HBoxContainer" parent="VBoxContainer/TopBar"]
+margin_left = 2.0
+margin_top = 2.0
+margin_right = 318.0
+margin_bottom = 2.0
+
+[node name="Label" type="Label" parent="VBoxContainer/TopBar/HBox"]
+visible = false
+margin_right = 42.0
+margin_bottom = 13.0
+text = ":/Spriter"
+
+[node name="Main" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 4.0
+margin_right = 320.0
+margin_bottom = 159.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.5
+custom_constants/separation = 0
+
+[node name="Painter" type="Control" parent="VBoxContainer/Main"]
+margin_right = 256.0
+margin_bottom = 155.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 5 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Main/Painter"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 0
+
+[node name="Canvas" type="Control" parent="VBoxContainer/Main/Painter/VBoxContainer"]
+margin_right = 256.0
+margin_bottom = 155.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 3 )
+
+[node name="PixelPos" type="Label" parent="VBoxContainer/Main/Painter/VBoxContainer/Canvas"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = -16.0
+margin_right = 64.0
+margin_bottom = -3.0
+text = "0,0"
+
+[node name="TileID" type="Label" parent="VBoxContainer/Main/Painter"]
+margin_left = 8.0
+margin_top = 4.0
+margin_right = 64.0
+margin_bottom = 17.0
+text = "#0"
+
+[node name="PaletteSelector" type="Control" parent="VBoxContainer/Main"]
+margin_left = 256.0
+margin_right = 320.0
+margin_bottom = 155.0
+rect_min_size = Vector2( 64, 64 )
+script = ExtResource( 2 )
+palette = [ Color( 0, 0, 0, 1 ), Color( 1, 1, 1, 1 ), Color( 0.141176, 0.329412, 0.145098, 1 ), Color( 0.192157, 0.247059, 0.403922, 1 ), Color( 0.290196, 0.223529, 0.14902, 1 ), Color( 0.419608, 0.141176, 0.141176, 1 ), Color( 0.619608, 0.756863, 0.345098, 1 ), Color( 0.356863, 0.72549, 0.85098, 1 ), Color( 0.85098, 0.588235, 0.141176, 1 ), Color( 1, 0.956863, 0.501961, 1 ), Color( 0.282353, 0.666667, 0.192157, 1 ), Color( 1, 0, 0, 1 ), Color( 0.172549, 0.462745, 0.87451, 1 ), Color( 0.713726, 0.713726, 0.713726, 1 ), Color( 0.266667, 0.266667, 0.266667, 1 ), Color( 0.541176, 0.47451, 0.352941, 1 ) ]
+swatch_size = 16
+rows = 4
+
+[node name="Tilesets" type="VBoxContainer" parent="VBoxContainer"]
+margin_top = 159.0
+margin_right = 320.0
+margin_bottom = 240.0
+custom_constants/separation = 0
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/Tilesets"]
+margin_right = 320.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 2 )
+
+[node name="TilesetSelector" parent="VBoxContainer/Tilesets/Panel" instance=ExtResource( 6 )]
+
+[node name="ScrollRight" parent="VBoxContainer/Tilesets/Panel/TilesetSelector" index="2"]
+margin_left = 304.0
+margin_right = 320.0
+
+[node name="TilesetContainer" type="ScrollContainer" parent="VBoxContainer/Tilesets"]
+margin_top = 17.0
+margin_right = 320.0
+margin_bottom = 81.0
+rect_min_size = Vector2( 0, 64 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/bg = SubResource( 1 )
+follow_focus = true
+
+[node name="TilesetControl" type="GridContainer" parent="VBoxContainer/Tilesets/TilesetContainer"]
+margin_left = 1.0
+margin_top = 1.0
+margin_right = 319.0
+margin_bottom = 63.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
+columns = 8
+script = ExtResource( 8 )
+
+[node name="NewTilesetPopup" type="WindowDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -112.0
+margin_top = -68.0
+margin_right = 112.0
+margin_bottom = 68.0
+popup_exclusive = true
+window_title = "New Tileset"
+script = ExtResource( 10 )
+
+[node name="MarginContainer" type="MarginContainer" parent="NewTilesetPopup"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = 3.0
+custom_constants/margin_right = 2
+custom_constants/margin_top = 4
+custom_constants/margin_left = 4
+custom_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NewTilesetPopup/MarginContainer"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 222.0
+margin_bottom = 135.0
+custom_constants/separation = 6
+
+[node name="NameAndTileSize" type="HBoxContainer" parent="NewTilesetPopup/MarginContainer/VBoxContainer"]
+margin_right = 218.0
+margin_bottom = 23.0
+alignment = 1
+
+[node name="name" type="LineEdit" parent="NewTilesetPopup/MarginContainer/VBoxContainer/NameAndTileSize"]
+margin_right = 107.0
+margin_bottom = 23.0
+rect_min_size = Vector2( 80, 0 )
+size_flags_horizontal = 3
+placeholder_text = "tileset name"
+
+[node name="Tilesize" type="OptionButton" parent="NewTilesetPopup/MarginContainer/VBoxContainer/NameAndTileSize"]
+margin_left = 111.0
+margin_right = 218.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+
+[node name="TileCount" type="Label" parent="NewTilesetPopup/MarginContainer/VBoxContainer"]
+margin_top = 29.0
+margin_right = 218.0
+margin_bottom = 42.0
+text = "Number of Tiles:"
+align = 1
+
+[node name="size" type="HBoxContainer" parent="NewTilesetPopup/MarginContainer/VBoxContainer"]
+margin_top = 48.0
+margin_right = 218.0
+margin_bottom = 71.0
+alignment = 1
+
+[node name="columns" type="SpinBox" parent="NewTilesetPopup/MarginContainer/VBoxContainer/size"]
+margin_left = 121.0
+margin_right = 218.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 32.0
+value = 8.0
+rounded = true
+suffix = "columns"
+
+[node name="Label2" type="Label" parent="NewTilesetPopup/MarginContainer/VBoxContainer/size"]
+margin_left = 101.0
+margin_top = 5.0
+margin_right = 117.0
+margin_bottom = 18.0
+text = " x "
+align = 1
+
+[node name="rows" type="SpinBox" parent="NewTilesetPopup/MarginContainer/VBoxContainer/size"]
+margin_right = 97.0
+margin_bottom = 23.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 32.0
+value = 8.0
+rounded = true
+suffix = "rows"
+
+[node name="HSeparator" type="HSeparator" parent="NewTilesetPopup/MarginContainer/VBoxContainer"]
+margin_top = 77.0
+margin_right = 218.0
+margin_bottom = 81.0
+
+[node name="Info" type="Label" parent="NewTilesetPopup/MarginContainer/VBoxContainer"]
+margin_top = 87.0
+margin_right = 218.0
+margin_bottom = 100.0
+text = "(Image size: 32x4)"
+align = 1
+
+[node name="Buttons" type="HBoxContainer" parent="NewTilesetPopup/MarginContainer/VBoxContainer"]
+margin_top = 106.0
+margin_right = 218.0
+margin_bottom = 123.0
+
+[node name="Add" type="Button" parent="NewTilesetPopup/MarginContainer/VBoxContainer/Buttons"]
+margin_right = 107.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Create"
+
+[node name="Cancel" type="Button" parent="NewTilesetPopup/MarginContainer/VBoxContainer/Buttons"]
+margin_left = 111.0
+margin_right = 218.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Cancel"
+
+[connection signal="color_selected" from="VBoxContainer/Main/PaletteSelector" to="VBoxContainer/Main/Painter/VBoxContainer/Canvas" method="set_selected_color"]
+
+[editable path="VBoxContainer/Tilesets/Panel/TilesetSelector"]
