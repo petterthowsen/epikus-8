@@ -28,6 +28,12 @@ func echo(what:String, color:String = "white"):
 		console.write(what)
 
 
+func error(message:String):
+	echo("Error: " + message, "red")
+	if editor:
+		editor.notify("ERROR: " + message)
+
+
 func goto_scene(path, arguments := {}):
 	scene_arguments = arguments.duplicate(true)
 	# This function will usually be called from a signal callback,

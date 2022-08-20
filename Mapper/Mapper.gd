@@ -34,12 +34,15 @@ func _ready():
 	tilesetControl.connect("tile_selected", self, "_on_tile_selected")
 	
 	if testing:
+		print("opening test project")
 		var p = Project.new("dev")
 		p.load_data()
 		_open_project(p)
 
+
 func _clear():
 	pass
+
 
 func _open_project(p):
 	project = p
@@ -52,7 +55,9 @@ func _open_project(p):
 		tilesetControl.set_tileset(ts)
 		selected_tileset = ts
 		mapEditor.select_tile(ts, tilesetControl.selected_tile)
-
+	
+	if project.maps.size() > 0:
+		selected_map = project.maps.values()[0]
 
 func _close_project():
 	project = null
@@ -107,6 +112,7 @@ func create_map(map_name:String, tile_size: int, width: int, height: int):
 func select_map_by_name(map_name:String):
 	var map = project.get_map(map_name)
 	_set_selected_map(map)
+	select_layer_by_name(map.layers[0].name)
 
 
 func select_layer_by_name(name:String):

@@ -13,6 +13,14 @@ func _init(map_name:String = "", w: int = 1, h: int = 1, tilesize: int = 1):
 	tile_size = tilesize
 
 
+func is_grid_pos_in_bounds(x: int, y: int):
+	if x < 0: return false
+	if y < 0: return false
+	if x >= size.x: return false
+	if y >= size.y: return false
+	return true
+
+
 func serialize() -> Dictionary:
 	var data = {
 		"name": name,

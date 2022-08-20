@@ -14,7 +14,7 @@ var selected_tileset:Tileset setget set_selected_tileset, get_selected_tileset
 var selected_tileset_tile:int = -1 setget set_selected_tileset_tile, get_selected_tileset_tile
 
 var camera := Vector2(0, 0)
-var zoom := 1
+var zoom := 1.0
 
 var mouse := Vector2()
 var mouse_tile_pos := Vector2()
@@ -66,8 +66,11 @@ func _gui_input(event):
 					start_pan()
 
 
-func set_zoom(z:int):
-	z = clamp(z, 1, 10)
+func set_zoom(z:float):
+	z = clamp(z, 0, 10)
+	if z == 0:
+		z = 0.5
+	
 	if zoom != z:
 		zoom = z
 		update()
@@ -82,21 +85,23 @@ func update_paint():
 	if layer and mouse_tile_pos != last_paint_tile_pos:
 		var x = mouse_tile_pos.x
 		var y = mouse_tile_pos.y
-		layer.set_tile_g(x, y, selected_tileset, selected_tileset_tile)
-		update()
-		last_paint_tile_pos = mouse_tile_pos.round()
+		if map.is_grid_pos_in_bounds(x, y):
+			layer.set_tile_g(x, y, selected_tileset, selected_tileset_tile)
+			update()
+			last_paint_tile_pos = mouse_tile_pos.round()
 
 
 func start_pan():
-	print("pan started")
+	print("pan started at mouse " + str(mouse))
 	is_panning = true
 	pan_start_camera = camera
-	pan_start_mouse = mouse_tile_pos
+	pan_start_mouse = get_local_mouse_position()
 
 
 func update_pan():
-	var offset = mouse_tile_pos - pan_start_mouse
-	camera = pan_start_camera - (offset * 2)
+	var offset = get_local_mouse_position() - pan_start_mouse
+	camera = (pan_start_camera - (offset / zoom)).round()
+	
 	status_camera.text = str(camera)
 	update()
 
@@ -132,19 +137,28 @@ func _draw_layer(layer:MapLayer):
 	
 	var tilesize = layer.tile_size
 	
+	var rect = get_rect()
+	rect.position -= Vector2(tilesize * 2, tilesize * 2)
+	
 	# loop through tiles
-	var pos := Vector2()
+	var skipped = 0
 	for x in layer.size.x:
 		for y in layer.size.y:
-			pos = Vector2(x * tilesize * zoom, y * tilesize * zoom) - (camera * zoom)
-			var real_rect = Rect2(pos, Vector2(tilesize, tilesize) * zoom)
-			if true or visible_area.has_point(pos):
+			var map_pos = Vector2(x * tilesize * zoom, y * tilesize * zoom)
+			var screen_pos = map_pos - camera * zoom
+			var screen_rect = Rect2(screen_pos, Vector2(tilesize, tilesize) * zoom)
+			if rect.has_point(screen_pos):
 				var tile = layer.get_tile_g(x, y)
 				if not tile.is_empty():
 					var tileset = tile.tileset
 					var tileset_region = tile.region
-					draw_texture_rect_region(tileset.texture, real_rect, tileset_region)
-
+					draw_texture_rect_region(tileset.texture, screen_rect, tileset_region)
+				else:
+					draw_rect(screen_rect, Color(0.02, 0.02, 0.02), true)
+			else:
+				skipped += 1
+	
+	print("skipped " + str(skipped))
 
 func _draw_grid():
 	var pos = Vector2(0, 0)
