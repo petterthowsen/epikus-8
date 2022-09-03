@@ -1,10 +1,62 @@
 class_name ESNode2D extends Node2D
 
+const _FONT_DEFAULT = preload("res://UI/fonts/5x7.tres")
+
 var _project:Project
+onready var _runner:Runner = $"/root/Runner"
 onready var _camera = $"/root/Runner/Camera"
 
-func _start():
-	pass
+var _BUTTON_MAPPING = [
+	"a",
+	"b",
+	"x",
+	"y",
+]
+
+class _ButtonState:
+	var just_pressed:bool = false
+	var just_released:bool = false
+	var down:bool = false
+
+func echo(message:String):
+	_runner.echo(message)
+
+func btn(action:String, player_id:int = 0) -> _ButtonState:
+	action = action.to_lower()
+	var joy_button = _BUTTON_MAPPING.find(action.to_lower())
+	
+	var state = _ButtonState.new()
+	
+	if player_id == 0:
+		state.down = Input.is_joy_button_pressed(player_id, joy_button) or Input.is_action_pressed(action)
+	else:
+		state.down = Input.is_joy_button_pressed(player_id, joy_button)
+	
+	return state
+
+func btn_a(player_id:int = 0) -> _ButtonState:
+	return btn("a", player_id)
+
+func btn_b(player_id:int = 0) -> _ButtonState:
+	return btn("b", player_id)
+
+func btn_x(player_id:int = 0) -> _ButtonState:
+	return btn("x", player_id)
+
+func btn_y(player_id:int = 0) -> _ButtonState:
+	return btn("y", player_id)
+
+func btn_left(player_id:int = 0) -> _ButtonState:
+	return btn("left", player_id)
+
+func btn_right(player_id:int = 0) -> _ButtonState:
+	return btn("right", player_id)
+
+func btn_up(player_id:int = 0) -> _ButtonState:
+	return btn("up", player_id)
+
+func btn_down(player_id:int = 0) -> _ButtonState:
+	return btn("down", player_id)
 
 # get camera
 func get_camera():
@@ -18,6 +70,11 @@ func get_tileset(tileset_name:String) -> Tileset:
 # get map
 func get_map(map_name:String) -> Map:
 	return _project.maps[map_name]
+
+
+func draw_text(text: String, pos_x: int, pos_y: int, color:Color = Color.white):
+	var h = _FONT_DEFAULT.get_height()
+	draw_string(_FONT_DEFAULT, Vector2(pos_x, pos_y + h), text, color)
 
 
 func draw_map(map_name:String, pos_x:int, pos_y:int):

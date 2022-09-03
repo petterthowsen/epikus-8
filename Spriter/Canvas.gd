@@ -27,12 +27,14 @@ var pencil_is_drawing:bool = false
 func _ready():
 	if test_image:
 		set_image(test_image.get_data())
-	
-	#connect("mouse_exited", self, "_on_mouse_exited")
 
 
-func _on_mouse_exited():
-	pencil_is_drawing = false
+func clear():
+	image = null
+	image_texture = null
+	zoom = 1
+	zoom_max = 40
+	camera = Vector2.ZERO
 
 
 func set_selected_color(color:Color):

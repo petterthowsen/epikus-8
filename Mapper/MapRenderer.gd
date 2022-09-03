@@ -141,7 +141,6 @@ func _draw_layer(layer:MapLayer):
 	rect.position -= Vector2(tilesize * 2, tilesize * 2)
 	
 	# loop through tiles
-	var skipped = 0
 	for x in layer.size.x:
 		for y in layer.size.y:
 			var map_pos = Vector2(x * tilesize * zoom, y * tilesize * zoom)
@@ -155,10 +154,7 @@ func _draw_layer(layer:MapLayer):
 					draw_texture_rect_region(tileset.texture, screen_rect, tileset_region)
 				else:
 					draw_rect(screen_rect, Color(0.02, 0.02, 0.02), true)
-			else:
-				skipped += 1
 	
-	print("skipped " + str(skipped))
 
 func _draw_grid():
 	var pos = Vector2(0, 0)

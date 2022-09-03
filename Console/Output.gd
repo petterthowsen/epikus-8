@@ -7,6 +7,7 @@ var is_asking:bool = false
 func _ready():
 	get_node("_v_scroll").hide()
 	$ScrollDelay.connect("timeout", self, "_scroll_timeout")
+	$_v_scroll.self_modulate = Color(0, 0, 0, 0)
 
 func write(string: String):
 	if line:

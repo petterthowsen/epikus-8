@@ -22,6 +22,7 @@ func _init():
 	coder = load("res://Coder/Coder.tscn").instance()
 	spriter = load("res://Spriter/Spriter.tscn").instance()
 	mapper = load("res://Mapper/Mapper.tscn").instance()
+	sfxer = load("res://SFXer/SFXer.tscn").instance()
 	ES.editor = self
 
 
@@ -30,6 +31,14 @@ func _ready():
 	add_window("Coder", coder)
 	add_window("Spriter", spriter)
 	add_window("Mapper", mapper)
+	add_window("SFXer", sfxer)
+	
+	if ES.scene_arguments.has("launched_by_runner"):
+		ES.push_log_to_console()
+		ES.clear_log_file()
+	
+	if ES.scene_arguments.has("open"):
+		open_project(ES.scene_arguments.open)
 
 
 func _input(event: InputEvent):
@@ -39,7 +48,20 @@ func _input(event: InputEvent):
 		run_project()
 
 
+func close_project():
+	# just reload the scene - simple :)
+	ES.goto_scene("res://Editor.tscn")
+#
+#	for window_name in windows:
+#			var window = get_node(window_name)
+#			if window.has_method("_close_project"):
+#				window._close_project()
+
+
 func open_project(name:String):
+	if project:
+		close_project()
+	
 	project = Project.new(name)
 	project.load_data()
 	
@@ -48,11 +70,19 @@ func open_project(name:String):
 		if window.has_method("_open_project"):
 			window._open_project(project)
 	
+	if project.has_meta("editor_window"):
+		go_to_window(project.get_meta("editor_window"))
+	
 	ES.echo("Project '" + project.name + "' opened.")
 
 
 func save_project():
 	if project:
+		for window_name in windows:
+			var window = get_node(window_name)
+			if window.has_method("_before_save_project"):
+				window._before_save_project(project)
+		
 		project.save_data()
 		
 		for window_name in windows:
@@ -70,10 +100,10 @@ func notify(text, time:float = 3):
 func run_project():
 	if project:
 		save_project()
-		#project.compile_scripts()
 		ES.echo("Running project...")
 		ES.goto_scene("res://Runner/Runner.tscn", {
 			"project": project.name,
+			"launched_by_editor": true
 		})
 
 
@@ -101,6 +131,7 @@ func go_to_window(name:String):
 	target_offset = -320 * num
 	is_sliding = true
 	get_window().grab_focus()
+	project.put_meta("editor_window", name)
 
 
 func next_window():

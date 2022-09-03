@@ -5,11 +5,31 @@ var Map = load("res://Project/Map.gd")
 var name:String
 var path:String
 var tilesets := {}
+var scripts := {}
 var maps := {}
+var meta := {}
+
+var is_loaded:bool = false
+var is_loaded_from_packed_file := false
 
 func _init(project_name:String):
 	name = project_name
 	path = "user://projects/" + project_name
+
+
+func has_meta(key:String) -> bool:
+	return meta.has(key)
+
+
+func get_meta(key:String, default = null):
+	if has_meta(key):
+		return meta[key]
+	else:
+		return default
+
+
+func put_meta(key, value):
+	meta[key] = value
 
 
 func get_project_file() -> String:
@@ -39,6 +59,7 @@ func load_data() -> bool:
 			var data = f.get_var(true)
 			unserialize(data)
 			f.close()
+	is_loaded = true
 	return true
 
 
@@ -137,12 +158,56 @@ func save_tilesets():
 		tileset.save_file()
 
 
+func pack():
+	var packed = {
+		"name": name,
+		"tilesets": {},
+		"maps": {},
+		"scripts": {},
+		"meta": meta,
+	}
+	
+	# tilesets
+	for tileset in tilesets.values():
+		packed["tilesets"][tileset.title] = tileset.pack()
+	
+	# scripts
+	var scripts = get_scripts()
+	for script in scripts:
+		packed["scripts"][script] = ResourceLoader.load(get_code_dir() + "/" + script, "", false)
+	
+	return packed
+
+
+func unpack(packed:Dictionary):
+	name = packed.name
+	meta = packed.meta
+	tilesets = {}
+	scripts = {}
+	
+	# tilesets
+	for tileset_data in packed.tilesets.values():
+		var tileset = Tileset.new()
+		tileset.unpack(tileset_data)
+		tilesets[tileset_data.title] = tileset
+	
+	# scripts
+	var script_keys = packed.scripts.keys()
+	var i = 0
+	for script in packed.scripts.values():
+		scripts[script_keys[i]] = script
+		i += 1
+	
+	is_loaded = true
+	is_loaded_from_packed_file = true
+
 
 func serialize():
 	var data = {
 		"tilesets": {},
 		"maps": {},
-		"scripts": {}
+		"scripts": {},
+		"meta": meta
 	}
 	
 	for tileset in tilesets.values():
@@ -155,6 +220,9 @@ func serialize():
 
 
 func unserialize(data:Dictionary):
+	if data.has("meta"):
+		meta = data.meta
+	
 	# tilesets
 	for tileset_data in data.tilesets.values():
 		var tileset = Tileset.new()

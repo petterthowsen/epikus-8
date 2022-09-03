@@ -48,7 +48,9 @@ func create_tiles():
 
 func _on_tile_pressed(id: int, emit_event:bool = true):
 	if selected_tile != -1:
-		get_child(selected_tile).pressed = false
+		var t = get_child(selected_tile)
+		if t:
+			t.pressed = false
 	get_child(id).pressed = true
 	selected_tile = id
 	

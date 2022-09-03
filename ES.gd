@@ -6,6 +6,7 @@ var current_scene = null
 var console
 var editor
 var escript = EScript.new()
+var packer:Packer = Packer.new()
 
 func _ready():
 	var root = get_tree().root
@@ -19,6 +20,10 @@ func open_project(project:String):
 	editor.open_project(project)
 	return true
 
+
+#-----------------------#
+#  Logging
+#-----------------------#
 func echo(what:String, color:String = "white"):
 	print(what)
 	
@@ -32,6 +37,50 @@ func error(message:String):
 	echo("Error: " + message, "red")
 	if editor:
 		editor.notify("ERROR: " + message)
+
+
+func push_log_to_console():
+	var f = File.new()
+	var logfile = "user://logs/godot.log"
+	if f.file_exists(logfile):
+		var err = f.open(logfile, File.READ)
+		if err:
+			error("Failed to open logfile at " + str(logfile) + ". Err: " + str(err))
+		else:
+			var messages:String = f.get_as_text()
+			var regex = RegEx.new()
+			
+			# remove warnings
+			regex.compile("\nWARNING: .+")
+			var matches:Array = regex.search_all(messages)
+			for m in matches:
+				for string in m.strings:
+					messages = messages.replace(string, "")
+			
+			# colorize errors
+			regex.compile("\nSCRIPT ERROR: .+")
+			matches = regex.search_all(messages)
+			for m in matches:
+				for string in m.strings:
+					messages = messages.replace(string, "[color=red]" + string + "[/color]")
+			
+			echo(messages)
+			
+			if editor and matches.size() > 0:
+				var errors = matches.size()
+				error(str(errors) + " Errors occured.")
+			
+			f.close()
+
+
+func clear_log_file():
+	var file = "user://logs/godot.log"
+	var f = File.new()
+	var err = f.open(file, File.WRITE)
+	if err:
+		error("Failed to clear log file. Err: " + str(err))
+	else:
+		f.close()
 
 
 func goto_scene(path, arguments := {}):
@@ -65,6 +114,9 @@ func _deferred_goto_scene(path):
 	get_tree().current_scene = current_scene
 
 
+#-----------------------#
+#  UTILS
+#-----------------------#
 func join(array:Array, separator:String = ""):
 	var string = ""
 	var i = 0

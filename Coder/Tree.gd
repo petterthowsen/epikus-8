@@ -17,7 +17,7 @@ func _ready():
 	if err == OK:
 		set_folder(".")
 	else:
-		ES.echo("Failed to open user://, error: " + str(err))
+		ES.error("Failed to open user://, error: " + str(err))
 
 
 func set_project(p:Project):
@@ -29,7 +29,6 @@ func get_current_dir() -> String:
 
 
 func set_folder(path:String):
-	print("Editor Tree opening " + path)
 	clear()
 	
 	var err = directory.change_dir(path)

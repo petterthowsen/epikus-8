@@ -1,6 +1,8 @@
-class_name Coder extends Control
+class_name Coder extends VBoxContainer
 
 const Editor = preload("res://Coder/Editor.tscn")
+
+export(bool) var testing:bool = false
 
 var has_focus:bool = false
 
@@ -8,7 +10,7 @@ var project:Project
 
 var code_template = """extends ESNode2D
 
-func _ready():
+func _start():
 	pass
 
 func _process(delta):
@@ -19,31 +21,53 @@ func _draw():
 """
 
 func _ready():
-	$Sidebar/Tree.connect("request_open", self, "_on_request_open")
-
+	$Code/Sidebar/Tree.connect("request_open", self, "_on_request_open")
+	if testing:
+		var p = Project.new("blah")
+		p.load_data()
+		_open_project(p)
+	
 
 func _open_project(project:Project):
 	self.project = project
-	$Sidebar/Tree.project = project
-	$Sidebar/Tree.set_folder(project.get_code_dir())
+	$Code/Sidebar/Tree.project = project
+	$Code/Sidebar/Tree.set_folder(project.get_code_dir())
+	
+	if project.has_meta("editor_coder_tabs"):
+		var files = project.get_meta("editor_coder_tabs")
+		for file in files:
+			open_file(file)
+	
+	$Code/Sidebar/FileMenu/AddScriptButton.disabled = false
 
 
 func _close_project():
+	$Code/Sidebar/Tree.clear()
+	$Code/EditorTabs.clear()
+	$Code/Sidebar/FileMenu/AddScriptButton.disabled = true
+	$Code/Sidebar/Tree.project = null
 	project = null
-	$Sidebar/Tree.project = null
-	$Sidebar/Tree.clear()
+
+
+func _before_save_project(project:Project):
+	var tabs = []
+	for tab in $Code/EditorTabs.get_children():
+		tabs.append(tab.file)
+	
+	if tabs.size() > 0:
+		project.put_meta("editor_coder_tabs", tabs)
 
 
 func _save_project(project:Project):
-	for editor in $EditorTabs.get_children():
+	for editor in $Code/EditorTabs.get_children():
 		if editor.dirty:
 			editor.save()
 
 
 func grab_focus():
 	has_focus = true
-	$EditorTabs.grab_focus()
-	$EditorTabs.grab_click_focus()
+	$Code/EditorTabs.grab_focus()
+	$Code/EditorTabs.grab_click_focus()
 
 
 func release_focus():
@@ -52,19 +76,19 @@ func release_focus():
 
 func _input(event:InputEvent):
 	if event.is_action("ctrl_tab") and event.pressed:
-		if $Sidebar.is_visible:
-			$Sidebar.hide()
-			$EditorTabs.grab_focus()
-			$EditorTabs.grab_click_focus()
+		if $Code/Sidebar.is_visible:
+			$Code/Sidebar.hide()
+			$Code/EditorTabs.grab_focus()
+			$Code/EditorTabs.grab_click_focus()
 		else:
-			$Sidebar.show()
-			$Sidebar.grab_focus()
-			$Sidebar.grab_click_focus()
+			$Code/Sidebar.show()
+			$Code/Sidebar.grab_focus()
+			$Code/Sidebar.grab_click_focus()
 		get_tree().set_input_as_handled()
 
 
 func is_file_open(path:String):
-	for editor in $EditorTabs.get_children():
+	for editor in $Code/EditorTabs.get_children():
 		if editor.file == path:
 			return true
 	return false
@@ -92,14 +116,14 @@ func open_file(path:String):
 	
 	var tab_name = Array(path.split("/")).pop_back()
 	
-	$EditorTabs.add_child(tab)
-	$EditorTabs.set_tab_title(tab.get_index(), tab_name)
-	$EditorTabs.current_tab = tab.get_index()
-	$EditorTabs.tabs_visible = true
+	$Code/EditorTabs.add_child(tab)
+	$Code/EditorTabs.set_tab_title(tab.get_index(), tab_name)
+	$Code/EditorTabs.current_tab = tab.get_index()
+	$Code/EditorTabs.tabs_visible = true
 
 
 func _on_AddScriptButton_pressed():
-	var item:Node = $Sidebar/Tree.new_file()
+	var item:Node = $Code/Sidebar/Tree.new_file()
 	item.connect("file_renamed", self, "_on_new_file_named", [item])
 
 

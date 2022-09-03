@@ -40,10 +40,6 @@ func _ready():
 		_open_project(p)
 
 
-func _clear():
-	pass
-
-
 func _open_project(p):
 	project = p
 	for tileset in project.tilesets.values():
@@ -59,6 +55,7 @@ func _open_project(p):
 	if project.maps.size() > 0:
 		selected_map = project.maps.values()[0]
 
+
 func _close_project():
 	project = null
 	tilesetSelector.clear()
@@ -67,8 +64,9 @@ func _close_project():
 
 
 func grab_focus():
-	refresh_tilesets()
-	refresh_maps()
+	if project:
+		refresh_tilesets()
+		refresh_maps()
 
 
 func refresh_tilesets():

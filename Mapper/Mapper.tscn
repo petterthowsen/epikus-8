@@ -75,6 +75,7 @@ custom_constants/separation = 0
 [node name="MapRenderer" type="Control" parent="VBoxContainer/VBoxContainer/MapEditor/Map"]
 margin_right = 239.0
 margin_bottom = 146.0
+rect_clip_content = true
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
@@ -108,9 +109,22 @@ size_flags_vertical = 3
 
 [node name="TilesetSelector" parent="VBoxContainer/VBoxContainer/MapEditor/Map/Tilesets" instance=ExtResource( 7 )]
 margin_right = 239.0
+margin_bottom = 0.0
+
+[node name="ScrollContainer" parent="VBoxContainer/VBoxContainer/MapEditor/Map/Tilesets/TilesetSelector" index="1"]
+margin_right = 239.0
+margin_bottom = 0.0
+
+[node name="ButtonList" parent="VBoxContainer/VBoxContainer/MapEditor/Map/Tilesets/TilesetSelector/ScrollContainer" index="0"]
+margin_right = 239.0
+
+[node name="AddTilesetButton" parent="VBoxContainer/VBoxContainer/MapEditor/Map/Tilesets/TilesetSelector" index="3"]
+visible = false
+margin_left = 223.0
+margin_right = 239.0
 
 [node name="TilesetScroller" type="ScrollContainer" parent="VBoxContainer/VBoxContainer/MapEditor/Map/Tilesets"]
-margin_top = 21.0
+margin_top = 4.0
 margin_right = 239.0
 margin_bottom = 73.0
 size_flags_horizontal = 3
@@ -119,9 +133,11 @@ follow_focus = true
 
 [node name="TilesetControl" type="GridContainer" parent="VBoxContainer/VBoxContainer/MapEditor/Map/Tilesets/TilesetScroller"]
 margin_right = 239.0
-margin_bottom = 52.0
+margin_bottom = 69.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_constants/vseparation = 0
+custom_constants/hseparation = 0
 script = ExtResource( 5 )
 
 [node name="MapOptions" type="VBoxContainer" parent="VBoxContainer/VBoxContainer/MapEditor"]
@@ -363,3 +379,5 @@ margin_left = 95.0
 margin_right = 131.0
 margin_bottom = 17.0
 text = "Cancel"
+
+[editable path="VBoxContainer/VBoxContainer/MapEditor/Map/Tilesets/TilesetSelector"]

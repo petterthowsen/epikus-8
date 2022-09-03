@@ -25,6 +25,14 @@ func _ready():
 		_open_project(project)
 
 
+func _close_project():
+	tilesetControl.clear()
+	canvas.clear()
+	tilesetSelector.clear()
+	
+	project = null
+
+
 func _open_project(p:Project):
 	project = p
 	for tileset in project.tilesets.values():

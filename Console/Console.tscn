@@ -49,6 +49,7 @@ size_flags_vertical = 3
 custom_constants/separation = 0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/Output/lines"]
+visible = false
 margin_right = 312.0
 margin_bottom = 14.0
 bbcode_enabled = true

@@ -4,13 +4,16 @@ onready var output = $VBoxContainer/Output
 onready var input = $VBoxContainer/Input
 
 var commands := {}
+var welcome_message = """[center]
+Welcome to [color=purple]Epikus-8![/color]
+[color=gray]Copyright (c) 2022 - Thowsen Media
+Version: 0.4[/color][/center]
+[color=gray]---------------------------------------------------[/color]
 
-var welcome_message = """
-Welcome to EPIKUS!
-Copyright (c) 2022 - Thowsen Media
-Version: 0.1
-------------------------------------
-Type "help" for a list of commands.
+Type [color=yellow]help[/color] for a list of commands, or [color=yellow]quickstart[/color] for a quick introduction.
+
+For more information, see [color=teal]thowsenmedia.itch.io/epikus-8[/color].
+Source code is available at [color=teal]github.com/petterthowsen/epikus-8[/color].
 """
 
 var dir:String = "user://"
@@ -20,14 +23,18 @@ func _init():
 
 func _ready():
 	add_command("help", HelpCommand.new())
-	add_command("cls", ClearScreenCommand.new())
-	add_command("ls", ListFilesCommand.new())
-	add_command("mkdir", MakeDirCommand.new())
+	add_command("quickstart", QuickStartCommand.new())
 	add_command("cd", ChangeDirCommand.new())
+	add_command("ls", ListFilesCommand.new())
+	add_command("cls", ClearScreenCommand.new())
+	add_command("mkdir", MakeDirCommand.new())
+	add_command("cat", CatConsoleCommand.new())
 	add_command("make", MakeProjectCommand.new())
 	add_command("open", OpenProjectCommand.new())
-	add_command("compile", CompileScriptCommand.new())
-	add_command("cat", CatConsoleCommand.new())
+	add_command("close", CloseProjectCommand.new())
+	add_command("pack", PackProjectCommand.new())
+	add_command("run", RunGameCommand.new())
+	add_command("browse", BrowseCommand.new())
 	
 	output.write(welcome_message)
 	input.grab_focus()

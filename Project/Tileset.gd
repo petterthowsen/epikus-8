@@ -46,6 +46,32 @@ func save_file():
 		return false
 	return true
 
+
+func pack() -> Dictionary:
+	var packed = {
+		"title": title,
+		"filename": filename,
+		"tile_size": tile_size,
+		"tile_meta": tile_meta,
+		"image_data": image.get_data(),
+		"image_width": image.get_width(),
+		"image_height": image.get_height()
+	}
+	return packed
+
+
+func unpack(packed: Dictionary):
+	title = packed.title
+	filename = packed.filename
+	tile_size = packed.tile_size
+	tile_meta = packed.tile_meta
+	var img_data = packed.image_data
+	image = Image.new()
+	image.create_from_data(packed.image_width, packed.image_height, false, Image.FORMAT_RGBA8, packed.image_data)
+	texture = ImageTexture.new()
+	texture.create_from_image(image, 0)
+
+
 func serialize() -> Dictionary:
 	return {
 		"path": path,

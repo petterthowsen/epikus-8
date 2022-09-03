@@ -1,6 +1,10 @@
 class_name ChangeDirCommand extends ConsoleCommand
 
 func run(args:Array = []):
+	if args.size() == 0:
+		ES.console.dir = "user://"
+		ES.echo("/")
+		return
 	var to_dir = args[0]
 	
 	var dir = Directory.new()
